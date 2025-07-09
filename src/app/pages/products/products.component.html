@@ -9,15 +9,15 @@
   <div class="filters-container">
     <div class="search-box">
       <i class="fas fa-search"></i>
-      <input 
-        type="text" 
+      <input
+        type="text"
         [(ngModel)]="searchQuery"
         (ngModelChange)="onSearch()"
-        placeholder="Rechercher un produit..." 
+        placeholder="Rechercher un produit..."
         class="search-input">
     </div>
     <div class="filter-options">
-      <select 
+      <select
         [(ngModel)]="selectedCategory"
         (ngModelChange)="onCategoryChange()"
         class="category-select">
@@ -26,7 +26,7 @@
           {{category.name}}
         </option>
       </select>
-      <select 
+      <select
         [(ngModel)]="selectedSort"
         (ngModelChange)="onSortChange()"
         class="sort-select">
@@ -53,20 +53,28 @@
   <div *ngIf="!loading" class="products-grid">
     <div *ngFor="let product of products" class="product-card" [class.featured]="product.badge === 'popular'">
       <div *ngIf="product.badge" class="product-badge" [class]="product.badge">
-        {{product.badge === 'sale' ? '-20%' : (product.badge === 'new' ? 'Nouveau' : 'Populaire')}}
+        {{ getBadgeLabel(product.badge) }}
       </div>
-      
+
       <div class="product-image">
         <img [src]="product.imageUrl" [alt]="product.name">
         <div class="product-actions">
           <button class="action-button" (click)="navigateToProductDetails(product.id)">
             <i class="fas fa-eye"></i>
           </button>
-          <button 
-            class="action-button favorite-button" 
+          <button
+            class="action-button favorite-button"
             [class.active]="isProductInFavorites(product.id)"
             (click)="toggleFavorite($event, product)">
-            <i class="fas" [class.fa-heart]="isProductInFavorites(product.id)" [class.fa-heart-o]="!isProductInFavorites(product.id)"></i>
+            <button
+              class="action-button favorite-button"
+              [class.active]="isProductInFavorites(product.id)"
+              (click)="toggleFavorite($event, product)">
+              <i class="fas fa-heart"
+                 [class.white]="isProductInFavorites(product.id)"
+                 [class.gray]="!isProductInFavorites(product.id)">
+              </i>
+            </button>
           </button>
           <button class="action-button">
             <i class="fas fa-shopping-cart"></i>
@@ -106,23 +114,23 @@
 
   <!-- Pagination -->
   <div *ngIf="!loading && totalPages > 1" class="pagination">
-    <button 
-      class="page-button" 
+    <button
+      class="page-button"
       [disabled]="currentPage === 1"
       (click)="onPageChange(currentPage - 1)">
       <i class="fas fa-chevron-left"></i>
     </button>
 
-    <button 
-      *ngFor="let page of getPages()" 
-      class="page-button" 
+    <button
+      *ngFor="let page of getPages()"
+      class="page-button"
       [class.active]="page === currentPage"
       (click)="onPageChange(page)">
       {{page}}
     </button>
 
-    <button 
-      class="page-button" 
+    <button
+      class="page-button"
       [disabled]="currentPage === totalPages"
       (click)="onPageChange(currentPage + 1)">
       <i class="fas fa-chevron-right"></i>

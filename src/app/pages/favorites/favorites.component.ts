@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { FavoritesService } from '../../services/favorites.service';
 import { Product } from '../../models/product.model';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-favorites',
@@ -37,7 +38,7 @@ import { Product } from '../../models/product.model';
               <button class="action-button" [routerLink]="['/products', product.id]">
                 <i class="fas fa-eye"></i>
               </button>
-              <button class="action-button remove-favorite" (click)="removeFromFavorites(product.id)">
+              <button class="action-button remove-favorite" (click)="removeFromFavorites(product)">
                 <i class="fas fa-trash"></i>
               </button>
             </div>
@@ -69,30 +70,114 @@ import { Product } from '../../models/product.model';
       </div>
     </div>
   `,
-  styleUrls: ['./favorites.component.css']
+  styleUrls: ['./favorites.component.css'],
+  animations: [
+    trigger('fadeIn', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(20px)' }),
+        animate('0.5s ease', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ]),
+    trigger('staggerAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(20px)' }),
+        animate('0.5s ease', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
+  ]
 })
 export class FavoritesComponent implements OnInit {
   favorites: Product[] = [];
+  recommendedProducts: Product[] = [];
 
-  constructor(private favoritesService: FavoritesService) {}
+  constructor(private favoritesService: FavoritesService, private router: Router) {}
 
   ngOnInit(): void {
     this.favoritesService.getFavorites().subscribe(
       favorites => this.favorites = favorites
     );
+
+    // Charger les produits recommandés
+    this.loadRecommendedProducts();
   }
 
-  removeFromFavorites(productId: number): void {
-    this.favoritesService.removeFromFavorites(productId);
+  removeFromFavorites(product: Product): void {
+    this.favoritesService.removeFromFavorites(product.id);
   }
 
   getRatingStars(rating: number): number[] {
+    const stars: number[] = [];
     const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-    
-    return Array(fullStars).fill(1)
-      .concat(hasHalfStar ? [0.5] : [])
-      .concat(Array(emptyStars).fill(0));
+    const hasHalfStar = rating % 1 !== 0;
+
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(1);
+    }
+
+    if (hasHalfStar) {
+      stars.push(0.5);
+    }
+
+    const emptyStars = 5 - stars.length;
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(0);
+    }
+
+    return stars;
+  }
+
+  addToCart(product: Product) {
+    // Implémenter la logique d'ajout au panier
+    console.log('Ajouter au panier:', product);
+  }
+
+  private loadRecommendedProducts() {
+    // Simuler le chargement des produits recommandés
+    // Dans une application réelle, cela viendrait d'une API
+    this.recommendedProducts = [
+      {
+        id: 1,
+        name: 'Produit Recommandé 1',
+        price: 99.99,
+        description: 'Description du produit recommandé 1',
+        category: 'Catégorie 1',
+        rating: 4.5,
+        imageUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500',
+        badge: 'new',
+        reviewCount: 12,
+        inStock: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: 2,
+        name: 'Produit Recommandé 2',
+        price: 149.99,
+        oldPrice: 199.99,
+        description: 'Description du produit recommandé 2',
+        category: 'Catégorie 2',
+        rating: 4.0,
+        imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500',
+        badge: 'sale',
+        reviewCount: 8,
+        inStock: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: 3,
+        name: 'Produit Recommandé 3',
+        price: 79.99,
+        description: 'Description du produit recommandé 3',
+        category: 'Catégorie 3',
+        rating: 4.8,
+        imageUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500',
+        badge: 'popular',
+        reviewCount: 15,
+        inStock: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    ];
   }
 } 

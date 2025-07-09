@@ -1,0 +1,81 @@
+<div class="favorites-page">
+  <!-- En-tête de la page -->
+  <header class="favorites-header">
+    <h1>Mes Favoris</h1>
+    <p>Retrouvez tous vos produits préférés</p>
+  </header>
+
+  <!-- Contenu principal -->
+  <div class="favorites-container">
+    <!-- Message si aucun favori -->
+    <div *ngIf="favorites.length === 0" class="no-favorites">
+      <i class="fas fa-heart-broken"></i>
+      <h2>Vous n'avez pas encore de favoris</h2>
+      <p>Explorez notre catalogue et ajoutez vos produits préférés</p>
+      <button class="browse-button" routerLink="/products">
+        <i class="fas fa-shopping-bag"></i>
+        Parcourir les produits
+      </button>
+    </div>
+
+    <!-- Liste des favoris -->
+    <div *ngIf="favorites.length > 0" class="favorites-grid" @staggerAnimation>
+      <div *ngFor="let product of favorites" class="favorite-card" @fadeIn>
+        <div class="favorite-image">
+          <img [src]="product.images?.[0] || product.imageUrl" [alt]="product.name">
+          <button class="remove-favorite" (click)="removeFromFavorites(product)">
+            <i class="fas fa-times"></i>
+          </button>
+          <div *ngIf="product.badge" class="product-badge" [class]="product.badge">
+            {{product.badge === 'sale' ? '-20%' : (product.badge === 'new' ? 'Nouveau' : 'Populaire')}}
+          </div>
+        </div>
+
+        <div class="favorite-info">
+          <h3>{{product.name}}</h3>
+          <div class="product-category">{{product.category}}</div>
+          
+          <div class="product-rating">
+            <ng-container *ngFor="let star of getRatingStars(product.rating)">
+              <i class="fas fa-star" *ngIf="star === 1"></i>
+              <i class="fas fa-star-half-alt" *ngIf="star === 0.5"></i>
+              <i class="far fa-star" *ngIf="star === 0"></i>
+            </ng-container>
+            <span>({{product.rating}})</span>
+          </div>
+
+          <div class="product-price">
+            <span *ngIf="product.oldPrice" class="old-price">{{product.oldPrice}} €</span>
+            <span class="current-price">{{product.price}} €</span>
+          </div>
+
+          <div class="favorite-actions">
+            <button class="view-button" [routerLink]="['/products', product.id]">
+              <i class="fas fa-eye"></i>
+              Voir le produit
+            </button>
+            <button class="add-to-cart-button" (click)="addToCart(product)">
+              <i class="fas fa-shopping-cart"></i>
+              Ajouter au panier
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recommandations -->
+    <div *ngIf="favorites.length > 0" class="recommendations-section">
+      <h2>Vous pourriez aussi aimer</h2>
+      <div class="recommendations-grid">
+        <div *ngFor="let product of recommendedProducts" class="recommendation-card" @fadeIn>
+          <img [src]="product.images?.[0] || product.imageUrl" [alt]="product.name">
+          <div class="recommendation-info">
+            <h3>{{product.name}}</h3>
+            <p class="price">{{product.price}} €</p>
+            <button [routerLink]="['/products', product.id]">Voir le produit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

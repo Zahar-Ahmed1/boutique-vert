@@ -72,7 +72,7 @@ export class ProductsComponent implements OnInit {
 
   toggleFavorite(event: Event, product: Product): void {
     event.stopPropagation(); // Empêche la navigation vers les détails du produit
-    
+
     if (this.isProductInFavorites(product.id)) {
       this.favoritesService.removeFromFavorites(product.id);
     } else {
@@ -109,7 +109,7 @@ export class ProductsComponent implements OnInit {
   getPages(): number[] {
     const pages: number[] = [];
     const maxVisiblePages = 5;
-    
+
     if (this.totalPages <= maxVisiblePages) {
       // Si le nombre total de pages est inférieur ou égal au nombre maximum de pages visibles
       for (let i = 1; i <= this.totalPages; i++) {
@@ -119,17 +119,17 @@ export class ProductsComponent implements OnInit {
       // Calcul des pages à afficher
       let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
       let endPage = startPage + maxVisiblePages - 1;
-      
+
       if (endPage > this.totalPages) {
         endPage = this.totalPages;
         startPage = Math.max(1, endPage - maxVisiblePages + 1);
       }
-      
+
       for (let i = startPage; i <= endPage; i++) {
         pages.push(i);
       }
     }
-    
+
     return pages;
   }
 
@@ -137,7 +137,7 @@ export class ProductsComponent implements OnInit {
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-    
+
     return Array(fullStars).fill(1)
       .concat(hasHalfStar ? [0.5] : [])
       .concat(Array(emptyStars).fill(0));
@@ -158,11 +158,20 @@ export class ProductsComponent implements OnInit {
     const now = new Date();
     const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2); // 2 jours à partir d'aujourd'hui
     const diff = endDate.getTime() - now.getTime();
-    
+
     const days = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-    
+
     return { days, hours, minutes };
+  }
+  //badge
+  getBadgeLabel(badge: string): string {
+    switch (badge) {
+      case 'sale': return '-30%';
+      case 'new': return 'Nouveau';
+      case 'popular': return 'Populaire';
+      default: return '';
+    }
   }
 }

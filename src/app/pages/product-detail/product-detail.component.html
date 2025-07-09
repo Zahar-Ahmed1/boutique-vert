@@ -34,7 +34,7 @@
       <button class="back-button" (click)="goBack()">
         <i class="fas fa-arrow-left"></i> Retour
       </button>
-      
+
       <div class="product-header">
         <h1>{{product.name}}</h1>
         <button
@@ -46,7 +46,7 @@
       </div>
 
       <div class="product-category">{{product.category}}</div>
-      
+
       <div class="product-rating">
         <ng-container *ngFor="let star of getRatingStars(product.rating)">
           <i class="fas fa-star" *ngIf="star === 1"></i>
@@ -62,7 +62,7 @@
       </div>
 
       <p class="product-description">{{product.description}}</p>
-
+      <div *ngIf="product.inStock" class="product-category">En stock</div>
       <div class="quantity-selector">
         <button (click)="decreaseQuantity()">
           <i class="fas fa-minus"></i>
@@ -100,4 +100,4 @@
       </div>
     </div>
   </div>
-</div> 
+</div>
