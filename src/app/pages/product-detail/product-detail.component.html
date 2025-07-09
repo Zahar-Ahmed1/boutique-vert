@@ -1,0 +1,103 @@
+<div class="product-detail-container">
+  <div *ngIf="loading" class="loading-spinner">
+    <i class="fas fa-spinner fa-spin"></i>
+    <p>Chargement du produit...</p>
+  </div>
+
+  <app-error-message
+    *ngIf="error"
+    [title]="'Erreur'"
+    [message]="errorMessage"
+    [showBackButton]="true">
+  </app-error-message>
+
+  <div *ngIf="!loading && !error && product" class="product-content">
+    <div class="product-gallery">
+      <div class="main-image">
+        <img [src]="product.images?.[selectedImageIndex] || product.imageUrl" [alt]="product.name">
+        <div *ngIf="product.badge" class="product-badge" [class]="product.badge">
+          {{product.badge === 'sale' ? '-20%' : (product.badge === 'new' ? 'Nouveau' : 'Populaire')}}
+        </div>
+      </div>
+      <div class="thumbnail-list" *ngIf="product.images?.length">
+        <button
+          *ngFor="let image of product.images; let i = index"
+          class="thumbnail"
+          [class.active]="i === selectedImageIndex"
+          (click)="selectImage(i)">
+          <img [src]="image" [alt]="product.name + ' thumbnail ' + (i + 1)">
+        </button>
+      </div>
+    </div>
+
+    <div class="product-info">
+      <button class="back-button" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i> Retour
+      </button>
+      
+      <div class="product-header">
+        <h1>{{product.name}}</h1>
+        <button
+          class="favorite-button"
+          [class.active]="isProductInFavorites()"
+          (click)="toggleFavorite()">
+          <i class="fas" [class.fa-heart]="isProductInFavorites()" [class.fa-heart-o]="!isProductInFavorites()"></i>
+        </button>
+      </div>
+
+      <div class="product-category">{{product.category}}</div>
+      
+      <div class="product-rating">
+        <ng-container *ngFor="let star of getRatingStars(product.rating)">
+          <i class="fas fa-star" *ngIf="star === 1"></i>
+          <i class="fas fa-star-half-alt" *ngIf="star === 0.5"></i>
+          <i class="far fa-star" *ngIf="star === 0"></i>
+        </ng-container>
+        <span>({{product.rating}})</span>
+      </div>
+
+      <div class="product-price">
+        <span *ngIf="product.oldPrice" class="old-price">{{product.oldPrice}} €</span>
+        <span class="current-price">{{product.price}} €</span>
+      </div>
+
+      <p class="product-description">{{product.description}}</p>
+
+      <div class="quantity-selector">
+        <button (click)="decreaseQuantity()">
+          <i class="fas fa-minus"></i>
+        </button>
+        <span>{{quantity}}</span>
+        <button (click)="increaseQuantity()">
+          <i class="fas fa-plus"></i>
+        </button>
+      </div>
+
+      <button class="add-to-cart">
+        <i class="fas fa-shopping-cart"></i>
+        Ajouter au panier
+      </button>
+
+      <div class="product-details">
+        <h2>Caractéristiques</h2>
+        <ul>
+          <li *ngFor="let detail of product.details">{{detail}}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="relatedProducts.length > 0" class="related-products" @fadeIn>
+    <h2>Produits similaires</h2>
+    <div class="related-products-grid">
+      <div *ngFor="let relatedProduct of relatedProducts" class="related-product-card" @fadeIn>
+        <img [src]="relatedProduct.images?.[0] || relatedProduct.imageUrl" [alt]="relatedProduct.name">
+        <div class="related-product-info">
+          <h3>{{relatedProduct.name}}</h3>
+          <p class="price">{{relatedProduct.price}} €</p>
+          <button [routerLink]="['/products', relatedProduct.id]">Voir le produit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
